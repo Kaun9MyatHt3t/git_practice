@@ -1,42 +1,36 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Depends
 from typing import Optional
+from pydantic import BaseModel
+from app.routers import chat, users, items, products, test
+from dotenv import load_dotenv
+from app.core.config import settings
+
+
+load_dotenv()
+
 
 
 app = FastAPI()
 
 @app.get("/")
 def home():
-  return {"message" : "Chatbot api" }
-
-@app.get("/users/{user_id}")
-def get_user(user_id : int):
-  return {
-    "user_id" : user_id
-  }
+  return {"message" : settings.APP_NAME,
+          "key" : settings.SECRET_KEY
+          }
 
 
-@app.get("/items")
-def get_item(page : int, limit : int):
-  return{
-    "page" : page, 
-    "limit" : limit
-  }
+app.include_router(chat.router)
+
+app.include_router(users.router)
+
+app.include_router(items.router)
+
+app.include_router(products.router)
+
+app.include_router(test.router)
 
 
-@app.get("/products/{product_id}")
-def get_product( product_id : int, search : Optional[str]= None):
-  return{
-    "message" : f"You are looking for Product {product_id}",
-    "search": search
-  }
 
 
-@app.get("/chat")
-def chat_history(page : int = 1, limit : int = 10):
-  return {
-    "page":page,
-    "limit":limit,
-    "messages":[
-      "Hello", "How are you?"
-    ]
-  }
+
+
