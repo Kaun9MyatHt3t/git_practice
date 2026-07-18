@@ -4,6 +4,40 @@ from pydantic import BaseModel
 from app.routers import chat, users, items, products, test
 from dotenv import load_dotenv
 from app.core.config import settings
+from app.database import engine, Base, SessionLocal
+from app import models
+from app.models import User
+
+
+user = User(
+  name="Alice",
+  email="alice@gmail.com"
+)
+
+
+try:
+  connection =engine.connect()
+  print("Database Connected!")
+  connection.close()
+
+except Exception as e:
+  print("Connection Failed")
+  print(e)
+
+
+Base.metadata.create_all(bind=engine)
+
+
+# db = SessionLocal()
+
+
+# db.add(user)
+
+
+# db.commit()
+
+
+print("User saved!")
 
 
 load_dotenv()
