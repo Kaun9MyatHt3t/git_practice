@@ -28,20 +28,7 @@ except Exception as e:
 Base.metadata.create_all(bind=engine)
 
 
-# db = SessionLocal()
-
-
-# db.add(user)
-
-
-# db.commit()
-
-
-print("User saved!")
-
-
 load_dotenv()
-
 
 
 app = FastAPI()
