@@ -2,15 +2,10 @@ from fastapi import APIRouter, HTTPException, Depends
 from app.database import get_db
 from sqlalchemy.orm import Session
 from app.models import User
-from pydantic import BaseModel
+from app.schemas import CreateUser
 
 
 router = APIRouter()
-
-
-class CreateUser(BaseModel):
-  name : str
-  email : str
 
 
 @router.post("/users", status_code = 201)
@@ -28,9 +23,14 @@ def create_user(user_input : CreateUser, db : Session = Depends(get_db)):
     email = user_input.email
   )
 
-  db.add(new_user)
+  try:
+    db.add(new_user)
+    db.commit()
+    db.refresh()
 
-  db.commit()
+  except Exception:
+    db.rollback()
+    raise
 
   return {
     "id": new_user.id,
@@ -71,6 +71,7 @@ def update_user(user_id: int, db: Session = Depends(get_db)):
   user.email = "updated@gmail.com"
 
   db.commit()
+
   return {
     "id" : user.id,
     "email" : user.email,
