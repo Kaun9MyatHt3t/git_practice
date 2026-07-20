@@ -12,7 +12,7 @@ class User(Base):
   name = Column(String)
   email = Column(String)
 
-  chats = relationship("ChatHistory")
+  chats = relationship("ChatHistory", back_populates="user")
 
 
 class ChatHistory(Base):
@@ -24,4 +24,4 @@ class ChatHistory(Base):
   time = Column(DateTime, default=datetime.now(UTC))
 
   user_id = Column(Integer, ForeignKey("users.id"))
-  user = relationship("User")
+  user = relationship("User", back_populates="chats")
